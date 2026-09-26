@@ -1,638 +1,410 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ProjectHub — Live Demo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fieldnotes — Student Project Exchange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
-
-:root {
-  --ink: #1B2A4A; --ink-soft: #33456B; --paper: #F6F3EC; --paper-raised: #FFFFFF;
-  --line: #E1DACB; --amber: #E1A335; --amber-deep: #B67F1F; --sage: #4C7A5E;
-  --sage-bg: #E7F0E9; --rust: #B94A3E; --rust-bg: #F7E7E5; --slate: #6B7280; --slate-bg: #EEEEF0;
-  --font-display: 'Fraunces', Georgia, serif; --font-body: 'Inter', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace; --radius: 10px;
-  --shadow-card: 0 1px 2px rgba(27,42,74,0.06), 0 4px 16px rgba(27,42,74,0.06);
+:root{
+  --ink:#1B2A4A; --paper:#FAF9F6; --gold:#C89B3C; --teal:#3E7C7C; --line:#DAD5C9; --muted:#6B7280;
+  --card:#FFFFFF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
-* { box-sizing: border-box; }
-html, body { margin:0; padding:0; background:var(--paper); color:var(--ink); font-family:var(--font-body); font-size:15px; line-height:1.5; }
-h1,h2,h3,h4 { font-family:var(--font-display); font-weight:600; margin:0; letter-spacing:-0.01em; }
-button,input,select,textarea { font-family:inherit; font-size:inherit; color:inherit; }
-:focus-visible { outline:2px solid var(--amber-deep); outline-offset:2px; }
-@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
-
-.auth-shell { min-height:100vh; display:grid; grid-template-columns:1.1fr 1fr; }
-@media (max-width:860px){ .auth-shell{grid-template-columns:1fr;} .auth-side{display:none;} }
-.auth-side { background:var(--ink); color:var(--paper); padding:56px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; }
-.auth-side::after{content:"";position:absolute;right:-120px;top:-120px;width:340px;height:340px;border:1px solid rgba(246,243,236,.14);border-radius:50%;}
-.auth-side::before{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border:1px solid rgba(246,243,236,.14);border-radius:50%;}
-.auth-brand { font-family:var(--font-mono); font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); }
-.auth-headline { font-size:40px; line-height:1.15; max-width:9.5em; margin-top:24px; }
-.auth-quote { font-size:14px; color:rgba(246,243,236,.68); max-width:30em; }
-.auth-quote b { color:var(--paper); font-weight:600; }
-.auth-main { display:flex; align-items:center; justify-content:center; padding:32px; }
-.auth-card { width:100%; max-width:400px; }
-.auth-card .eyebrow { font-family:var(--font-mono); font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--slate); margin-bottom:8px; }
-.auth-card h1 { font-size:28px; margin-bottom:6px; }
-.auth-card .sub { color:var(--slate); margin-bottom:28px; font-size:14px; }
-.field { margin-bottom:16px; }
-.field label { display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; color:var(--ink-soft); }
-.field input, .field select, .field textarea { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--paper-raised); color:var(--ink); }
-.field textarea { resize:vertical; min-height:90px; }
-.field input:focus,.field select:focus,.field textarea:focus{ border-color:var(--amber-deep); }
-.field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 18px; border-radius:8px; border:1px solid transparent; font-weight:600; font-size:14px; cursor:pointer; transition:transform .08s ease, box-shadow .15s ease; }
-.btn:active{ transform:translateY(1px); }
-.btn-primary { background:var(--ink); color:var(--paper); width:100%; }
-.btn-primary:hover{ background:var(--ink-soft); }
-.btn-amber { background:var(--amber); color:var(--ink); }
-.btn-amber:hover{ background:var(--amber-deep); color:var(--paper); }
-.btn-ghost { background:transparent; border-color:var(--line); color:var(--ink); }
-.btn-ghost:hover{ border-color:var(--ink); }
-.btn-sm { padding:7px 12px; font-size:13px; }
-.btn-danger { background:var(--rust-bg); color:var(--rust); }
-.btn-danger:hover{ background:var(--rust); color:#fff; }
-.auth-foot { margin-top:20px; font-size:13.5px; color:var(--slate); text-align:center; }
-.auth-foot a { color:var(--amber-deep); font-weight:600; text-decoration:none; cursor:pointer; }
-.error-banner { background:var(--rust-bg); color:var(--rust); padding:10px 12px; border-radius:8px; font-size:13.5px; margin-bottom:16px; display:none; }
-.error-banner.show{ display:block; }
-.demo-box { margin-top:22px; padding:12px 14px; border:1px dashed var(--line); border-radius:8px; font-family:var(--font-mono); font-size:12px; color:var(--slate); line-height:1.9; }
-.demo-box b{ color:var(--ink-soft); }
-.demo-box .pick { cursor:pointer; text-decoration:underline; }
-.demo-box .pick:hover{ color:var(--ink); }
-
-.app-shell { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
-@media (max-width:780px){ .app-shell{grid-template-columns:1fr;} .sidebar{display:none;} }
-.sidebar { background:var(--ink); color:var(--paper); padding:28px 20px; display:flex; flex-direction:column; position:sticky; top:0; height:100vh; }
-.sidebar-brand { font-family:var(--font-mono); font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); margin-bottom:32px; }
-.sidebar-nav { display:flex; flex-direction:column; gap:4px; flex:1; }
-.sidebar-nav .nav-item { padding:10px 12px; border-radius:8px; font-size:14px; font-weight:500; color:rgba(246,243,236,.72); cursor:pointer; }
-.sidebar-nav .nav-item.active{ background:rgba(246,243,236,.1); color:var(--paper); }
-.sidebar-user { border-top:1px solid rgba(246,243,236,.14); padding-top:16px; font-size:13px; }
-.sidebar-user .name{ font-weight:600; }
-.sidebar-user .role-tag { display:inline-block; margin-top:6px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; padding:3px 8px; border-radius:20px; background:rgba(225,163,53,.18); color:var(--amber); }
-.sidebar-user .logout { display:block; margin-top:12px; color:rgba(246,243,236,.55); font-size:12.5px; cursor:pointer; text-decoration:underline; }
-.main { padding:32px 40px 60px; max-width:1160px; }
-.topbar { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
-.topbar h1{ font-size:26px; }
-.topbar .sub{ color:var(--slate); font-size:14px; margin-top:4px; }
-.stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:32px; }
-.stat-card { background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow-card); }
-.stat-card .num{ font-family:var(--font-display); font-size:30px; font-weight:600; }
-.stat-card .label{ font-size:12.5px; color:var(--slate); margin-top:4px; }
-.panel { background:var(--paper-raised); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-card); margin-bottom:24px; }
-.panel-head { padding:18px 22px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
-.panel-head h2{ font-size:17px; }
-.panel-body { padding:6px 22px 20px; }
-.entry { display:grid; grid-template-columns:44px 1fr auto; gap:16px; align-items:start; padding:18px 0; border-bottom:1px solid var(--line); }
-.entry:last-child{ border-bottom:none; }
-.entry-index { font-family:var(--font-mono); font-size:12px; color:var(--slate); padding-top:3px; }
-.entry-main .ref { font-family:var(--font-mono); font-size:11.5px; color:var(--amber-deep); letter-spacing:.04em; }
-.entry-main h3{ font-size:16.5px; margin-top:4px; }
-.entry-meta { font-size:12.5px; color:var(--slate); margin-top:6px; display:flex; gap:14px; flex-wrap:wrap; }
-.entry-abstract { font-size:13.5px; color:var(--ink-soft); margin-top:8px; max-width:62ch; }
-.entry-side { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
-.stamp { font-family:var(--font-mono); font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:5px 11px; border:1.5px solid currentColor; border-radius:3px; transform:rotate(-3deg); display:inline-block; white-space:nowrap; }
-.stamp.submitted{ color:var(--slate); }
-.stamp.under_review{ color:var(--amber-deep); }
-.stamp.revision_requested{ color:var(--rust); }
-.stamp.approved,.stamp.completed{ color:var(--sage); transform:rotate(3deg); }
-.stamp.rejected{ color:var(--rust); transform:rotate(3deg); }
-.empty-state { text-align:center; padding:48px 20px; color:var(--slate); }
-.empty-state h3{ color:var(--ink); font-size:17px; margin-bottom:6px; }
-.empty-state p{ font-size:13.5px; max-width:32ch; margin:0 auto; }
-table { width:100%; border-collapse:collapse; font-size:13.5px; }
-th { text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--slate); padding:10px 8px; border-bottom:1px solid var(--line); }
-td { padding:12px 8px; border-bottom:1px solid var(--line); vertical-align:middle; }
-tr:last-child td{ border-bottom:none; }
-.pill { font-family:var(--font-mono); font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; padding:3px 9px; border-radius:20px; }
-.pill.student{ background:var(--slate-bg); color:var(--slate); }
-.pill.faculty{ background:var(--sage-bg); color:var(--sage); }
-.pill.admin{ background:rgba(225,163,53,.18); color:var(--amber-deep); }
-.modal-backdrop { position:fixed; inset:0; background:rgba(27,42,74,.45); display:none; align-items:center; justify-content:center; padding:20px; z-index:50; }
-.modal-backdrop.show{ display:flex; }
-.modal { background:var(--paper-raised); border-radius:12px; width:100%; max-width:560px; max-height:88vh; overflow-y:auto; box-shadow:0 20px 60px rgba(27,42,74,.3); }
-.modal-head { padding:20px 24px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; }
-.modal-head h2{ font-size:18px; }
-.modal-close { cursor:pointer; color:var(--slate); font-size:20px; line-height:1; background:none; border:none; }
-.modal-body { padding:20px 24px; }
-.modal-foot { padding:16px 24px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px; }
-.review-item { padding:12px 0; border-bottom:1px solid var(--line); }
-.review-item:last-child{ border-bottom:none; }
-.review-item .who{ font-size:12.5px; font-weight:600; color:var(--ink-soft); }
-.review-item .when{ font-size:11.5px; color:var(--slate); margin-left:6px; }
-.review-item p{ margin:4px 0 0; font-size:13.5px; }
-.toast { position:fixed; bottom:24px; right:24px; background:var(--ink); color:var(--paper); padding:12px 18px; border-radius:8px; font-size:13.5px; box-shadow:0 10px 30px rgba(0,0,0,.2); opacity:0; transform:translateY(8px); transition:all .25s ease; pointer-events:none; z-index:100; }
-.toast.show{ opacity:1; transform:translateY(0); }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --ink:#EDE9DF; --paper:#14181F; --gold:#D9AE58; --teal:#6FB3B3; --line:#2A2F3A; --muted:#9AA0AC; --card:#1B202B; }
+}
+:root[data-theme="dark"]{ --ink:#EDE9DF; --paper:#14181F; --gold:#D9AE58; --teal:#6FB3B3; --line:#2A2F3A; --muted:#9AA0AC; --card:#1B202B; }
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;}
+h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px;}
+header{border-bottom:1px solid var(--line);padding:28px 0 22px;}
+.brandrow{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+.brand{font-size:28px;letter-spacing:-0.01em;}
+.brand span{color:var(--teal);}
+.tag{color:var(--muted);font-size:14px;max-width:420px;}
+.headright{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.viewer{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);}
+.viewer img{width:22px;height:22px;border-radius:50%;}
+.banner{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:10px 14px;font-size:13px;color:var(--muted);margin:18px 0;display:none;}
+main{padding:32px 0 80px;}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:24px;}
+input,select,textarea{font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:3px;background:var(--card);color:var(--ink);}
+input[type=text]{flex:1;min-width:180px;}
+select{cursor:pointer;}
+.btn{font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:10px 16px;border-radius:3px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;}
+.btn.secondary{background:transparent;color:var(--ink);}
+.btn.small{padding:6px 12px;font-size:13px;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.count{color:var(--muted);font-size:13px;margin-bottom:18px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px;cursor:pointer;display:flex;flex-direction:column;gap:10px;}
+.card:hover{border-color:var(--teal);}
+.card:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+.badge{display:inline-block;font-size:11px;font-weight:600;color:var(--teal);border:1px solid var(--teal);border-radius:20px;padding:2px 10px;width:fit-content;}
+.card h3{font-size:18px;line-height:1.25;}
+.card .meta{font-size:12.5px;color:var(--muted);}
+.card p{font-size:13.5px;color:var(--muted);margin:0;flex:1;}
+.empty{border:1px dashed var(--line);border-radius:4px;padding:48px 24px;text-align:center;color:var(--muted);}
+.empty a{color:var(--teal);cursor:pointer;text-decoration:underline;}
+dialog{border:none;border-radius:6px;padding:0;max-width:560px;width:92%;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.25);}
+dialog::backdrop{background:rgba(20,20,25,.5);}
+.dialog-body{padding:28px;max-height:80vh;overflow-y:auto;}
+.dialog-body h2{font-size:22px;margin-bottom:6px;}
+.dialog-body .meta{color:var(--muted);font-size:13px;margin-bottom:16px;}
+.dialog-body .field{margin-bottom:16px;}
+.dialog-body label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:none;margin-bottom:4px;}
+.dialog-body .fielddesc{white-space:pre-wrap;font-size:14.5px;}
+.dialog-actions{display:flex;gap:10px;margin-top:6px;}
+form.addform{display:flex;flex-direction:column;gap:14px;}
+form.addform label{font-size:13px;font-weight:600;}
+form.addform .row{display:flex;gap:12px;flex-wrap:wrap;}
+form.addform .row > div{flex:1;min-width:160px;display:flex;flex-direction:column;gap:5px;}
+textarea{width:100%;resize:vertical;min-height:80px;font-family:'Inter',sans-serif;}
+.close-x{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);}
+dialog{position:relative;}
+.formmsg{font-size:13px;color:var(--muted);min-height:16px;}
+footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font-size:12.5px;text-align:center;}
 </style>
 </head>
 <body>
-<div id="app"></div>
-<div class="toast" id="toast"></div>
+<header>
+  <div class="wrap brandrow">
+    <div>
+      <div class="brand">Field<span>notes</span></div>
+      <div class="tag">A shared board where students across colleges post the projects they're building and find what others are working on.</div>
+    </div>
+    <div class="headright">
+      <div class="viewer" id="viewerBox">Loading…</div>
+      <button class="btn" id="openAdd">Post a project</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="banner" id="offlineBanner">You're viewing a local preview — open the published page to post, comment, and see everyone's projects live.</div>
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Search by title, tech, or keyword…">
+    <select id="filterUni"><option value="">All institutions</option></select>
+    <select id="filterDomain"><option value="">All domains</option></select>
+    <button class="btn secondary small" id="clearFilters">Clear</button>
+  </div>
+  <div class="count" id="resultCount"></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="emptyState" style="display:none;">
+    Nothing matches yet. <a id="emptyReset">Clear filters</a> or <a id="emptyAdd">post the first project</a>.
+  </div>
+</main>
+
+<footer>Signed-in members of this artifact's organization can post and comment. Everyone's posts are shared and update live.</footer>
+
+<dialog id="viewDialog">
+  <button class="close-x" data-close>✕</button>
+  <div class="dialog-body" id="viewBody"></div>
+</dialog>
+
+<dialog id="addDialog">
+  <button class="close-x" data-close>✕</button>
+  <div class="dialog-body">
+    <h2 style="margin-bottom:18px;">Post a project</h2>
+    <form class="addform" id="addForm">
+      <div><label>Project title</label><input required type="text" id="f-title" placeholder="e.g. Campus Ride-Share Matcher"></div>
+      <div class="row">
+        <div><label>Your name</label><input required type="text" id="f-name" placeholder="Jane Doe"></div>
+        <div><label>Institution</label><input required type="text" id="f-uni" placeholder="e.g. NIT Trichy"></div>
+      </div>
+      <div class="row">
+        <div><label>Domain</label>
+          <select id="f-domain">
+            <option>Web Development</option><option>Mobile Apps</option><option>AI / ML</option>
+            <option>IoT / Hardware</option><option>Data Science</option><option>Cybersecurity</option>
+            <option>Design</option><option>Other</option>
+          </select>
+        </div>
+        <div><label>Status</label>
+          <select id="f-status"><option>In progress</option><option>Completed</option><option>Looking for teammates</option></select>
+        </div>
+      </div>
+      <div><label>Description</label><textarea required id="f-desc" placeholder="What does it do, what stack did you use, what's next?"></textarea></div>
+      <div><label>Contact / link (optional)</label><input type="text" id="f-link" placeholder="email, GitHub, or portfolio link"></div>
+      <div class="formmsg" id="addMsg"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px;">
+        <button type="button" class="btn secondary" data-close>Cancel</button>
+        <button type="submit" class="btn" id="submitBtn">Publish project</button>
+      </div>
+    </form>
+  </div>
+</dialog>
 
 <script>
-/* ============================================================
-   ProjectHub — self-contained demo
-   In-memory data store standing in for the real Express+SQLite
-   backend, so this single file works as a live, clickable preview.
-   ============================================================ */
+const seed = [
+  {title:"Campus Ride-Share Matcher", name:"Ananya Rao", uni:"BITS Pilani", domain:"Mobile Apps", status:"Completed", desc:"An Android app that matches students commuting the same route to and from campus, cutting auto-fare costs. Built with Kotlin, Firebase, and the Google Maps Directions API.\n\nNext: adding a fare-split ledger.", link:"github.com/ananyar/rideshare"},
+  {title:"Low-Cost Soil Moisture Sensor Network", name:"Rohit Verma", uni:"IIT Roorkee", domain:"IoT / Hardware", status:"In progress", desc:"A mesh of ESP32-based soil sensors for a college farm plot, reporting moisture and temperature over LoRa to a dashboard that recommends irrigation windows.", link:"rohitv@iitr.ac.in"},
+  {title:"Lecture Notes Summarizer", name:"Priya Menon", uni:"Christ University", domain:"AI / ML", status:"Looking for teammates", desc:"A tool that converts recorded lecture audio into structured, topic-wise notes using Whisper for transcription and a fine-tuned summarization model. Looking for someone comfortable with frontend work.", link:"github.com/pmenon/lecnotes"},
+  {title:"Placement Cell Analytics Dashboard", name:"Devansh Iyer", uni:"VIT Vellore", domain:"Data Science", status:"Completed", desc:"A dashboard built for our placement cell to track offer trends, branch-wise placement rates, and recruiter visit patterns over five years, using Python, Pandas and Plotly Dash.", link:""}
+];
 
-let DB = {
-  colleges: [
-    { id: 1, name: 'Nova Institute of Technology' },
-    { id: 2, name: 'Meridian College of Engineering' },
-  ],
-  users: [
-    { id: 1, name: 'Priya Nair', email: 'admin@platform.edu', password: 'admin123', role: 'admin', college_id: 1, department: 'Administration' },
-    { id: 2, name: 'Dr. Arvind Rao', email: 'arvind.rao@nova.edu', password: 'faculty123', role: 'faculty', college_id: 1, department: 'Computer Science' },
-    { id: 3, name: 'Dr. Meera Iyer', email: 'meera.iyer@meridian.edu', password: 'faculty123', role: 'faculty', college_id: 2, department: 'Electronics' },
-    { id: 4, name: 'Ravi Kumar', email: 'ravi.kumar@nova.edu', password: 'student123', role: 'student', college_id: 1, department: 'Computer Science' },
-    { id: 5, name: 'Sneha Patil', email: 'sneha.patil@nova.edu', password: 'student123', role: 'student', college_id: 1, department: 'Computer Science' },
-    { id: 6, name: 'Karan Mehta', email: 'karan.mehta@meridian.edu', password: 'student123', role: 'student', college_id: 2, department: 'Electronics' },
-  ],
-  projects: [
-    { id: 1, ref_code: 'PRJ-2026-0001', title: 'Smart Irrigation using IoT Sensors', domain: 'IoT', abstract: 'A soil-moisture-driven irrigation controller that reduces water usage by scheduling valve activation based on live sensor readings.', student_id: 4, mentor_id: 2, status: 'approved', grade: 'A', created_at: Date.now() - 12 * 86400000 },
-    { id: 2, ref_code: 'PRJ-2026-0002', title: 'Campus Lost & Found Chatbot', domain: 'AI/ML', abstract: 'An NLP-based chatbot that matches lost-item reports with found-item listings across the campus community.', student_id: 5, mentor_id: 2, status: 'under_review', grade: null, created_at: Date.now() - 4 * 86400000 },
-    { id: 3, ref_code: 'PRJ-2026-0003', title: 'Low-Cost ECG Signal Analyzer', domain: 'Embedded Systems', abstract: 'A portable ECG front-end with a microcontroller pipeline for basic arrhythmia flagging, aimed at rural clinics.', student_id: 6, mentor_id: 3, status: 'submitted', grade: null, created_at: Date.now() - 1 * 86400000 },
-  ],
-  reviews: [
-    { id: 1, project_id: 1, faculty_id: 2, comment: 'Solid implementation. Add a section on long-term calibration drift before final submission.', created_at: Date.now() - 6 * 86400000 },
-  ],
-  nextUserId: 7, nextProjectId: 4, nextReviewId: 2,
-};
+let db=null, usr=null, comments=null, canWrite=null, viewerId=null;
+let projects = []; // {id, ...fields}
 
-let SESSION = null; // logged-in user object
+const grid = document.getElementById('grid');
+const uniSel = document.getElementById('filterUni');
+const domSel = document.getElementById('filterDomain');
+const search = document.getElementById('search');
+const resultCount = document.getElementById('resultCount');
+const emptyState = document.getElementById('emptyState');
+const viewerBox = document.getElementById('viewerBox');
+const offlineBanner = document.getElementById('offlineBanner');
+const submitBtn = document.getElementById('submitBtn');
+const addMsg = document.getElementById('addMsg');
 
-function nextRefCode() {
-  const year = 2026;
-  const count = DB.projects.filter(p => p.ref_code.startsWith('PRJ-' + year)).length;
-  return `PRJ-${year}-${String(count + 1).padStart(4, '0')}`;
-}
-function findUser(id) { return DB.users.find(u => u.id === id); }
-function findCollege(id) { return DB.colleges.find(c => c.id === id); }
-function statusLabel(s) {
-  return { submitted:'Submitted', under_review:'Under Review', revision_requested:'Revision Needed', approved:'Approved', completed:'Completed', rejected:'Rejected' }[s] || s;
-}
-function timeAgo(ts) {
-  const mins = Math.round((Date.now() - ts) / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return mins + 'm ago';
-  const hrs = Math.round(mins / 60);
-  if (hrs < 24) return hrs + 'h ago';
-  const days = Math.round(hrs / 24);
-  if (days < 30) return days + 'd ago';
-  return new Date(ts).toLocaleDateString();
-}
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str == null ? '' : str;
-  return div.innerHTML;
-}
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(el._t);
-  el._t = setTimeout(() => el.classList.remove('show'), 2400);
-}
-function projectView(p) {
-  return {
-    ...p,
-    student_name: findUser(p.student_id).name,
-    student_email: findUser(p.student_id).email,
-    mentor_name: p.mentor_id ? findUser(p.mentor_id).name : null,
-    college_name: findCollege(findUser(p.student_id).college_id)?.name || '',
-  };
-}
-function projectsFor(user) {
-  if (user.role === 'student') return DB.projects.filter(p => p.student_id === user.id).map(projectView);
-  if (user.role === 'faculty') return DB.projects.filter(p => p.mentor_id === user.id || !p.mentor_id).map(projectView);
-  return DB.projects.map(projectView);
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function populateFilters(){
+  const unis = [...new Set(projects.map(p=>p.uni))].sort();
+  const doms = [...new Set(projects.map(p=>p.domain))].sort();
+  const uKeep = uniSel.value, dKeep = domSel.value;
+  uniSel.innerHTML = '<option value="">All institutions</option>' + unis.map(u=>`<option>${esc(u)}</option>`).join('');
+  domSel.innerHTML = '<option value="">All domains</option>' + doms.map(d=>`<option>${esc(d)}</option>`).join('');
+  uniSel.value = uKeep; domSel.value = dKeep;
 }
 
-const app = document.getElementById('app');
-
-/* ---------------- ROUTER ---------------- */
-function render() {
-  if (!SESSION) return renderLogin();
-  if (SESSION.role === 'student') return renderStudent();
-  if (SESSION.role === 'faculty') return renderFaculty();
-  return renderAdmin();
-}
-
-/* ---------------- LOGIN ---------------- */
-function renderLogin(prefill) {
-  app.innerHTML = `
-    <div class="auth-shell">
-      <div class="auth-side">
-        <div class="auth-brand">ProjectHub — Ref. Register</div>
-        <div><div class="auth-headline">Every student project, logged, reviewed, and on record.</div></div>
-        <div class="auth-quote">One register across every participating college — <b>students submit</b>, <b>faculty review</b>, and <b>admins track</b> the whole portfolio in one place.</div>
-      </div>
-      <div class="auth-main">
-        <div class="auth-card">
-          <div class="eyebrow">Sign in</div>
-          <h1>Welcome back</h1>
-          <div class="sub">Enter your credentials to open your dashboard.</div>
-          <div class="error-banner" id="errBanner"></div>
-          <form id="loginForm">
-            <div class="field"><label>Email</label><input type="email" id="email" required value="${prefill ? prefill.email : ''}" placeholder="you@college.edu" /></div>
-            <div class="field"><label>Password</label><input type="password" id="password" required value="${prefill ? prefill.password : ''}" placeholder="••••••••" /></div>
-            <button type="submit" class="btn btn-primary">Sign in</button>
-          </form>
-          <div class="auth-foot">New here? <a id="goRegister">Create an account</a></div>
-          <div class="demo-box">
-            <b>Demo logins — click to fill</b><br/>
-            <span class="pick" data-e="admin@platform.edu" data-p="admin123">admin@platform.edu / admin123 (Admin)</span><br/>
-            <span class="pick" data-e="arvind.rao@nova.edu" data-p="faculty123">arvind.rao@nova.edu / faculty123 (Faculty)</span><br/>
-            <span class="pick" data-e="ravi.kumar@nova.edu" data-p="student123">ravi.kumar@nova.edu / student123 (Student)</span>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  document.getElementById('goRegister').onclick = renderRegister;
-  document.querySelectorAll('.pick').forEach(el => {
-    el.onclick = () => { document.getElementById('email').value = el.dataset.e; document.getElementById('password').value = el.dataset.p; };
+function render(){
+  const q = search.value.trim().toLowerCase();
+  const uni = uniSel.value, dom = domSel.value;
+  const filtered = projects.filter(p=>{
+    if(uni && p.uni!==uni) return false;
+    if(dom && p.domain!==dom) return false;
+    if(q && !((p.title+p.desc+p.name+p.uni).toLowerCase().includes(q))) return false;
+    return true;
   });
-  document.getElementById('loginForm').onsubmit = (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const user = DB.users.find(u => u.email === email && u.password === password);
-    const err = document.getElementById('errBanner');
-    if (!user) { err.textContent = 'Incorrect email or password'; err.classList.add('show'); return; }
-    SESSION = user;
-    render();
-  };
+  resultCount.textContent = `${filtered.length} project${filtered.length!==1?'s':''}`;
+  grid.innerHTML = '';
+  emptyState.style.display = filtered.length ? 'none' : 'block';
+  filtered.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.tabIndex = 0;
+    card.innerHTML = `<span class="badge">${esc(p.domain)}</span><h3>${esc(p.title)}</h3>
+      <div class="meta">${esc(p.name)} · ${esc(p.uni)}</div>
+      <p>${esc(p.desc.slice(0,110))}${p.desc.length>110?'…':''}</p>
+      <div class="meta">${esc(p.status)}</div>`;
+    card.addEventListener('click', ()=>openView(p, card));
+    card.addEventListener('keydown', e=>{ if(e.key==='Enter') openView(p, card); });
+    grid.appendChild(card);
+  });
 }
 
-/* ---------------- REGISTER ---------------- */
-function renderRegister() {
-  app.innerHTML = `
-    <div class="auth-shell">
-      <div class="auth-side">
-        <div class="auth-brand">ProjectHub — Ref. Register</div>
-        <div><div class="auth-headline">Register once. Submit, track, and get reviewed for every project after.</div></div>
-        <div class="auth-quote">Admin accounts are provisioned by your institution — students and faculty can self-register below.</div>
-      </div>
-      <div class="auth-main">
-        <div class="auth-card">
-          <div class="eyebrow">Create account</div>
-          <h1>Join ProjectHub</h1>
-          <div class="sub">Set up your student or faculty profile.</div>
-          <div class="error-banner" id="errBanner"></div>
-          <form id="regForm">
-            <div class="field"><label>I am a</label>
-              <select id="role"><option value="student">Student</option><option value="faculty">Faculty / Mentor</option></select>
-            </div>
-            <div class="field"><label>Full name</label><input type="text" id="name" required placeholder="Jane Doe" /></div>
-            <div class="field"><label>Email</label><input type="email" id="email" required placeholder="you@college.edu" /></div>
-            <div class="field-row">
-              <div class="field"><label>College</label>
-                <select id="college">${DB.colleges.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('')}</select>
-              </div>
-              <div class="field"><label>Department</label><input type="text" id="department" placeholder="Computer Science" /></div>
-            </div>
-            <div class="field"><label>Password</label><input type="password" id="password" required minlength="6" placeholder="At least 6 characters" /></div>
-            <button type="submit" class="btn btn-primary">Create account</button>
-          </form>
-          <div class="auth-foot">Already registered? <a id="goLogin">Sign in</a></div>
-        </div>
-      </div>
-    </div>`;
-  document.getElementById('goLogin').onclick = () => renderLogin();
-  document.getElementById('regForm').onsubmit = (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    const err = document.getElementById('errBanner');
-    if (DB.users.some(u => u.email === email)) { err.textContent = 'An account with this email already exists'; err.classList.add('show'); return; }
-    const user = {
-      id: DB.nextUserId++, name: document.getElementById('name').value.trim(), email,
-      password: document.getElementById('password').value, role: document.getElementById('role').value,
-      college_id: Number(document.getElementById('college').value), department: document.getElementById('department').value.trim(),
-    };
-    DB.users.push(user);
-    SESSION = user;
-    render();
-  };
-}
+const viewDialog = document.getElementById('viewDialog');
+function openView(p, cardEl) {
+  const canComment = !!comments;
 
-/* ---------------- SHARED SHELL ---------------- */
-function shell(navHtml, mainHtml, roleTag) {
-  app.innerHTML = `
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="sidebar-brand">ProjectHub</div>
-        <nav class="sidebar-nav">${navHtml}</nav>
-        <div class="sidebar-user">
-          <div class="name">${escapeHtml(SESSION.name)}</div>
-          <span class="role-tag">${roleTag}</span>
-          <span class="logout" id="logoutBtn">Sign out</span>
-        </div>
-      </aside>
-      <main class="main">${mainHtml}</main>
-    </div>
-    <div class="modal-backdrop" id="modalBackdrop">
-      <div class="modal">
-        <div class="modal-head"><h2 id="modalTitle"></h2><button class="modal-close" id="modalClose">&times;</button></div>
-        <div class="modal-body" id="modalBody"></div>
-        <div class="modal-foot" id="modalFoot"></div>
-      </div>
-    </div>`;
-  document.getElementById('logoutBtn').onclick = () => { SESSION = null; render(); };
-  document.getElementById('modalClose').onclick = closeModal;
-  document.getElementById('modalBackdrop').onclick = (e) => { if (e.target.id === 'modalBackdrop') closeModal(); };
-}
-function openModal(title, bodyHtml, footHtml) {
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalBody').innerHTML = bodyHtml;
-  document.getElementById('modalFoot').innerHTML = footHtml || '';
-  document.getElementById('modalBackdrop').classList.add('show');
-}
-function closeModal() { document.getElementById('modalBackdrop').classList.remove('show'); }
+  let projectLink = "";
 
-function entryHtml(p, index, metaFn) {
-  return `
-    <div class="entry">
-      <div class="entry-index">${String(index).padStart(2, '0')}</div>
-      <div class="entry-main">
-        <div class="ref">${p.ref_code}</div>
-        <h3>${escapeHtml(p.title)}</h3>
-        <div class="entry-meta">${metaFn(p)}</div>
-        <div class="entry-abstract">${escapeHtml(p.abstract)}</div>
-      </div>
-      <div class="entry-side">
-        <span class="stamp ${p.status}">${statusLabel(p.status)}</span>
-        <button class="btn btn-ghost btn-sm" data-open="${p.id}">View</button>
-      </div>
-    </div>`;
-}
+  if (p.link) {
+    let url = p.link.trim();
 
-/* ---------------- STUDENT ---------------- */
-function renderStudent() {
-  const projects = projectsFor(SESSION);
-  const total = projects.length;
-  const inReview = projects.filter(p => ['submitted','under_review'].includes(p.status)).length;
-  const revisions = projects.filter(p => p.status === 'revision_requested').length;
-  const approved = projects.filter(p => ['approved','completed'].includes(p.status)).length;
+    if (!/^https?:\/\//i.test(url)) {
+      url = "https://" + url;
+    }
 
-  const main = `
-    <div class="topbar">
-      <div><h1>My Projects</h1><div class="sub">Your submission log across every semester.</div></div>
-      <button class="btn btn-amber" id="newProjectBtn">+ Submit New Project</button>
-    </div>
-    <div class="stat-grid">
-      <div class="stat-card"><div class="num">${total}</div><div class="label">Total submitted</div></div>
-      <div class="stat-card"><div class="num">${inReview}</div><div class="label">Awaiting review</div></div>
-      <div class="stat-card"><div class="num">${revisions}</div><div class="label">Need revision</div></div>
-      <div class="stat-card"><div class="num">${approved}</div><div class="label">Approved / completed</div></div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Submission log</h2></div>
-      <div class="panel-body">
-        ${projects.length === 0 ? `<div class="empty-state"><h3>No projects yet</h3><p>Submit your first project to start your log.</p></div>` :
-          projects.map((p,i) => entryHtml(p, i+1, p => `
-            <span>${escapeHtml(p.domain)}</span><span>Mentor: ${p.mentor_name ? escapeHtml(p.mentor_name) : 'Not yet assigned'}</span><span>${timeAgo(p.created_at)}</span>${p.grade ? `<span>Grade: <b>${escapeHtml(p.grade)}</b></span>` : ''}`
-          )).join('')}
-      </div>
-    </div>`;
-  shell(`<div class="nav-item active">My Projects</div>`, main, 'Student');
+    try {
+      const parsed = new URL(url);
 
-  document.getElementById('newProjectBtn').onclick = openNewProjectModal;
-  document.querySelectorAll('[data-open]').forEach(el => el.onclick = () => openStudentDetail(Number(el.dataset.open)));
-}
-
-function openNewProjectModal() {
-  const faculty = DB.users.filter(u => u.role === 'faculty');
-  openModal('Submit a new project', `
-    <div class="error-banner" id="npErr"></div>
-    <div class="field"><label>Project title</label><input type="text" id="npTitle" placeholder="e.g. Smart Irrigation using IoT Sensors" /></div>
-    <div class="field-row">
-      <div class="field"><label>Domain</label><input type="text" id="npDomain" placeholder="e.g. AI/ML, IoT, Web Dev" /></div>
-      <div class="field"><label>Preferred mentor (optional)</label>
-        <select id="npMentor"><option value="">Unassigned</option>${faculty.map(f => `<option value="${f.id}">${escapeHtml(f.name)} — ${escapeHtml(f.department||'')}</option>`).join('')}</select>
-      </div>
-    </div>
-    <div class="field"><label>Abstract</label><textarea id="npAbstract" placeholder="Briefly describe the problem, approach and expected outcome…"></textarea></div>
-  `, `<button class="btn btn-ghost" id="npCancel">Cancel</button><button class="btn btn-primary" id="npSave" style="width:auto;">Submit project</button>`);
-  document.getElementById('npCancel').onclick = closeModal;
-  document.getElementById('npSave').onclick = () => {
-    const title = document.getElementById('npTitle').value.trim();
-    const domain = document.getElementById('npDomain').value.trim();
-    const abstract = document.getElementById('npAbstract').value.trim();
-    const mentor_id = Number(document.getElementById('npMentor').value) || null;
-    const err = document.getElementById('npErr');
-    if (!title || !domain || !abstract) { err.textContent = 'Please fill in title, domain and abstract.'; err.classList.add('show'); return; }
-    DB.projects.push({ id: DB.nextProjectId++, ref_code: nextRefCode(), title, domain, abstract, student_id: SESSION.id, mentor_id, status: 'submitted', grade: null, created_at: Date.now() });
-    closeModal(); toast('Project submitted successfully'); renderStudent();
-  };
-}
-
-function openStudentDetail(id) {
-  const p = projectView(DB.projects.find(x => x.id === id));
-  const reviews = DB.reviews.filter(r => r.project_id === id);
-  openModal(p.title, `
-    <div class="ref" style="margin-bottom:10px;">${p.ref_code}</div>
-    <span class="stamp ${p.status}">${statusLabel(p.status)}</span>
-    <p style="margin-top:16px; color:var(--ink-soft); font-size:13.5px;">${escapeHtml(p.abstract)}</p>
-    <div class="entry-meta" style="margin:14px 0;">
-      <span>Domain: ${escapeHtml(p.domain)}</span><span>Mentor: ${p.mentor_name ? escapeHtml(p.mentor_name) : 'Not yet assigned'}</span>
-      ${p.grade ? `<span>Grade: <b>${escapeHtml(p.grade)}</b></span>` : ''}
-    </div>
-    <h3 style="font-size:15px; margin-top:22px; margin-bottom:8px;">Mentor feedback</h3>
-    ${reviews.length === 0 ? '<p style="font-size:13px;color:var(--slate);">No feedback yet.</p>' :
-      reviews.map(r => `<div class="review-item"><span class="who">${escapeHtml(findUser(r.faculty_id).name)}</span><span class="when">${timeAgo(r.created_at)}</span><p>${escapeHtml(r.comment)}</p></div>`).join('')}
-  `, `<button class="btn btn-ghost" id="closeD">Close</button>`);
-  document.getElementById('closeD').onclick = closeModal;
-}
-
-/* ---------------- FACULTY ---------------- */
-function renderFaculty() {
-  const projects = projectsFor(SESSION);
-  const mine = projects.filter(p => p.mentor_id === SESSION.id).length;
-  const unassigned = projects.filter(p => !p.mentor_id).length;
-  const pending = projects.filter(p => ['submitted','under_review'].includes(p.status)).length;
-  const approved = projects.filter(p => ['approved','completed'].includes(p.status)).length;
-
-  const main = `
-    <div class="topbar"><div><h1>Review Queue</h1><div class="sub">Projects assigned to you, plus unassigned submissions you can pick up.</div></div></div>
-    <div class="stat-grid">
-      <div class="stat-card"><div class="num">${mine}</div><div class="label">Assigned to you</div></div>
-      <div class="stat-card"><div class="num">${unassigned}</div><div class="label">Unassigned</div></div>
-      <div class="stat-card"><div class="num">${pending}</div><div class="label">Pending review</div></div>
-      <div class="stat-card"><div class="num">${approved}</div><div class="label">Approved / completed</div></div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><h2>Projects</h2></div>
-      <div class="panel-body">
-        ${projects.length === 0 ? `<div class="empty-state"><h3>No projects in your queue</h3><p>Submissions will appear here.</p></div>` :
-          projects.map((p,i) => entryHtml(p, i+1, p => `
-            <span>${escapeHtml(p.domain)}</span><span>Student: ${escapeHtml(p.student_name)}</span><span>${escapeHtml(p.college_name)}</span><span>${timeAgo(p.created_at)}</span>`
-          )).join('')}
-      </div>
-    </div>`;
-  shell(`<div class="nav-item active">Review Queue</div>`, main, 'Faculty');
-  document.querySelectorAll('[data-open]').forEach(el => el.onclick = () => openFacultyReview(Number(el.dataset.open)));
-}
-
-function openFacultyReview(id) {
-  const p = projectView(DB.projects.find(x => x.id === id));
-  const reviews = DB.reviews.filter(r => r.project_id === id);
-  openModal(p.title, `
-    <div class="ref" style="margin-bottom:10px;">${p.ref_code}</div>
-    <span class="stamp ${p.status}">${statusLabel(p.status)}</span>
-    <p style="margin-top:16px; color:var(--ink-soft); font-size:13.5px;">${escapeHtml(p.abstract)}</p>
-    <div class="entry-meta" style="margin:14px 0;"><span>Student: ${escapeHtml(p.student_name)}</span><span>Domain: ${escapeHtml(p.domain)}</span></div>
-    <h3 style="font-size:15px; margin-top:22px; margin-bottom:8px;">Previous feedback</h3>
-    ${reviews.length === 0 ? '<p style="font-size:13px;color:var(--slate);">No feedback yet.</p>' :
-      reviews.map(r => `<div class="review-item"><span class="who">${escapeHtml(findUser(r.faculty_id).name)}</span><span class="when">${timeAgo(r.created_at)}</span><p>${escapeHtml(r.comment)}</p></div>`).join('')}
-    <h3 style="font-size:15px; margin-top:22px; margin-bottom:8px;">Update status</h3>
-    <div class="field"><select id="fStatus">
-      ${['submitted','under_review','revision_requested','approved','completed','rejected'].map(s => `<option value="${s}" ${p.status===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
-    </select></div>
-    <div class="field"><label>Grade (optional)</label><input type="text" id="fGrade" value="${p.grade||''}" placeholder="e.g. A, B+" /></div>
-    <div class="field"><label>Feedback comment (optional)</label><textarea id="fComment" placeholder="Notes for the student…"></textarea></div>
-  `, `<button class="btn btn-ghost" id="fCancel">Cancel</button><button class="btn btn-primary" id="fSave" style="width:auto;">Save update</button>`);
-  document.getElementById('fCancel').onclick = closeModal;
-  document.getElementById('fSave').onclick = () => {
-    const status = document.getElementById('fStatus').value;
-    const grade = document.getElementById('fGrade').value.trim();
-    const comment = document.getElementById('fComment').value.trim();
-    const proj = DB.projects.find(x => x.id === id);
-    proj.status = status; proj.grade = grade || proj.grade;
-    if (!proj.mentor_id) proj.mentor_id = SESSION.id;
-    if (comment) DB.reviews.push({ id: DB.nextReviewId++, project_id: id, faculty_id: SESSION.id, comment, created_at: Date.now() });
-    closeModal(); toast('Review saved'); renderFaculty();
-  };
-}
-
-/* ---------------- ADMIN ---------------- */
-let ADMIN_VIEW = 'projects';
-function renderAdmin() {
-  const projects = projectsFor(SESSION);
-  const total = projects.length;
-  const unassigned = projects.filter(p => !p.mentor_id).length;
-  const inReview = projects.filter(p => ['submitted','under_review'].includes(p.status)).length;
-  const completed = projects.filter(p => ['approved','completed'].includes(p.status)).length;
-
-  const nav = `
-    <div class="nav-item ${ADMIN_VIEW==='projects'?'active':''}" data-view="projects">All Projects</div>
-    <div class="nav-item ${ADMIN_VIEW==='users'?'active':''}" data-view="users">Users</div>`;
-
-  const projectsPanel = `
-    <div class="panel"><div class="panel-head"><h2>Submission log</h2></div>
-      <div class="panel-body">
-        ${projects.length === 0 ? `<div class="empty-state"><h3>No projects yet</h3><p>Submissions will appear here.</p></div>` :
-          projects.map((p,i) => entryHtml(p, i+1, p => `
-            <span>${escapeHtml(p.domain)}</span><span>Student: ${escapeHtml(p.student_name)}</span><span>${escapeHtml(p.college_name)}</span><span>Mentor: ${p.mentor_name?escapeHtml(p.mentor_name):'Unassigned'}</span>`
-          )).join('')}
-      </div>
-    </div>`;
-
-  const usersPanel = `
-    <div class="panel"><div class="panel-head"><h2>All users</h2></div>
-      <div class="panel-body" style="padding-top:14px;">
-        <table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>College</th><th>Department</th><th></th></tr></thead>
-        <tbody>
-          ${DB.users.map(u => `
-            <tr>
-              <td>${escapeHtml(u.name)}</td><td>${escapeHtml(u.email)}</td>
-              <td><span class="pill ${u.role}">${u.role}</span></td>
-              <td>${escapeHtml(findCollege(u.college_id)?.name || '—')}</td>
-              <td>${escapeHtml(u.department || '—')}</td>
-              <td>${u.id === SESSION.id ? '' : `<button class="btn btn-danger btn-sm" data-del="${u.id}">Remove</button>`}</td>
-            </tr>`).join('')}
-        </tbody></table>
-      </div>
-    </div>`;
-
-  const main = `
-    <div class="topbar">
-      <div><h1>${ADMIN_VIEW==='projects'?'All Projects':'Users'}</h1><div class="sub">${ADMIN_VIEW==='projects'?'Portfolio across every participating college.':'Students, faculty and admins on the platform.'}</div></div>
-      ${ADMIN_VIEW==='users' ? `<button class="btn btn-amber" id="addUserBtn">+ Add User</button>` : ''}
-    </div>
-    <div class="stat-grid">
-      <div class="stat-card"><div class="num">${total}</div><div class="label">Total projects</div></div>
-      <div class="stat-card"><div class="num">${unassigned}</div><div class="label">Awaiting mentor</div></div>
-      <div class="stat-card"><div class="num">${inReview}</div><div class="label">In review</div></div>
-      <div class="stat-card"><div class="num">${completed}</div><div class="label">Approved / completed</div></div>
-    </div>
-    ${ADMIN_VIEW==='projects' ? projectsPanel : usersPanel}`;
-
-  shell(nav, main, 'Admin');
-
-  document.querySelectorAll('[data-view]').forEach(el => el.onclick = () => { ADMIN_VIEW = el.dataset.view; renderAdmin(); });
-  if (ADMIN_VIEW === 'projects') {
-    document.querySelectorAll('[data-open]').forEach(el => el.onclick = () => openAdminProject(Number(el.dataset.open)));
-  } else {
-    document.getElementById('addUserBtn').onclick = openAddUserModal;
-    document.querySelectorAll('[data-del]').forEach(el => el.onclick = () => {
-      if (!confirm('Remove this user? This cannot be undone.')) return;
-      DB.users = DB.users.filter(u => u.id !== Number(el.dataset.del));
-      toast('User removed'); renderAdmin();
-    });
+      if (["http:", "https:"].includes(parsed.protocol)) {
+        projectLink = `
+          <div class="field">
+            <label>Project Link / Contact</label>
+            <a href="${esc(parsed.href)}"
+               target="_blank"
+               rel="noopener noreferrer"
+               style="color:var(--teal);word-break:break-word;">
+              Visit Project / GitHub →
+            </a>
+          </div>`;
+      }
+    } catch (err) {
+      projectLink = `
+        <div class="field">
+          <label>Contact</label>
+          <div class="fielddesc">${esc(p.link)}</div>
+        </div>`;
+    }
   }
-}
 
-function openAdminProject(id) {
-  const p = projectView(DB.projects.find(x => x.id === id));
-  const reviews = DB.reviews.filter(r => r.project_id === id);
-  const faculty = DB.users.filter(u => u.role === 'faculty');
-  openModal(p.title, `
-    <div class="ref" style="margin-bottom:10px;">${p.ref_code}</div>
-    <span class="stamp ${p.status}">${statusLabel(p.status)}</span>
-    <p style="margin-top:16px; color:var(--ink-soft); font-size:13.5px;">${escapeHtml(p.abstract)}</p>
-    <div class="entry-meta" style="margin:14px 0;">
-      <span>Student: ${escapeHtml(p.student_name)} (${escapeHtml(p.student_email)})</span><span>Domain: ${escapeHtml(p.domain)}</span>
-      ${p.grade ? `<span>Grade: <b>${escapeHtml(p.grade)}</b></span>` : ''}
+  document.getElementById("viewBody").innerHTML = `
+    <span class="badge">${esc(p.domain)}</span>
+
+    <h2 style="margin-top:12px;font-size:26px;">
+      ${esc(p.title)}
+    </h2>
+
+    <div class="meta" style="margin-top:8px;">
+      👤 ${esc(p.name)}<br>
+      🎓 ${esc(p.uni)}<br>
+      📌 ${esc(p.status)}
     </div>
-    <h3 style="font-size:15px; margin-top:22px; margin-bottom:8px;">Assign / reassign mentor</h3>
-    <div class="field"><select id="aMentor">
-      <option value="">Unassigned</option>
-      ${faculty.map(f => `<option value="${f.id}" ${p.mentor_id===f.id?'selected':''}>${escapeHtml(f.name)} — ${escapeHtml(f.department||'')}</option>`).join('')}
-    </select></div>
-    <h3 style="font-size:15px; margin-top:22px; margin-bottom:8px;">Feedback log</h3>
-    ${reviews.length === 0 ? '<p style="font-size:13px;color:var(--slate);">No feedback yet.</p>' :
-      reviews.map(r => `<div class="review-item"><span class="who">${escapeHtml(findUser(r.faculty_id).name)}</span><span class="when">${timeAgo(r.created_at)}</span><p>${escapeHtml(r.comment)}</p></div>`).join('')}
-  `, `<button class="btn btn-ghost" id="aCancel">Close</button><button class="btn btn-primary" id="aSave" style="width:auto;">Save mentor</button>`);
-  document.getElementById('aCancel').onclick = closeModal;
-  document.getElementById('aSave').onclick = () => {
-    const mentor_id = Number(document.getElementById('aMentor').value) || null;
-    DB.projects.find(x => x.id === id).mentor_id = mentor_id;
-    closeModal(); toast('Mentor updated'); renderAdmin();
+
+    <hr style="border:0;border-top:1px solid var(--line);margin:20px 0;">
+
+    <div class="field">
+      <label>About This Project</label>
+      <div class="fielddesc">${esc(p.desc)}</div>
+    </div>
+
+    ${p.tech ? `
+      <div class="field">
+        <label>Technologies Used</label>
+        <div class="fielddesc">${esc(p.tech)}</div>
+      </div>
+    ` : ""}
+
+    ${projectLink}
+
+    <div class="dialog-actions" style="margin-top:24px;">
+      <button class="btn secondary small" id="discussBtn"
+        ${canComment ? "" : "disabled"}>
+        Discuss Project
+      </button>
+
+      <button class="btn small" id="backBtn">
+        Close
+      </button>
+    </div>
+
+    <div class="formmsg" id="discussMsg"></div>
+  `;
+
+  viewDialog.showModal();
+
+  document.getElementById("backBtn").onclick = () => {
+    viewDialog.close();
+  };
+
+  document.getElementById("discussBtn").onclick = async () => {
+    const msg = document.getElementById("discussMsg");
+
+    if (!comments) {
+      msg.textContent =
+        "Comments are available on the published platform.";
+      return;
+    }
+
+    try {
+      const res = await comments.openComposer({
+        element: cardEl ||
+          document.getElementById("discussBtn")
+      });
+
+      if (!res.opened) {
+        msg.textContent =
+          "Comment box is busy. Try again.";
+      }
+    } catch (err) {
+      msg.textContent =
+        "Unable to open comments right now.";
+    }
   };
 }
 
-function openAddUserModal() {
-  openModal('Add user', `
-    <div class="error-banner" id="uErr"></div>
-    <div class="field"><label>Role</label><select id="uRole"><option value="student">Student</option><option value="faculty">Faculty</option><option value="admin">Admin</option></select></div>
-    <div class="field"><label>Full name</label><input type="text" id="uName" /></div>
-    <div class="field"><label>Email</label><input type="email" id="uEmail" /></div>
-    <div class="field-row">
-      <div class="field"><label>College</label><select id="uCollege">${DB.colleges.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('')}</select></div>
-      <div class="field"><label>Department</label><input type="text" id="uDept" /></div>
-    </div>
-    <div class="field"><label>Temporary password</label><input type="password" id="uPassword" minlength="6" /></div>
-  `, `<button class="btn btn-ghost" id="uCancel">Cancel</button><button class="btn btn-primary" id="uSave" style="width:auto;">Create user</button>`);
-  document.getElementById('uCancel').onclick = closeModal;
-  document.getElementById('uSave').onclick = () => {
-    const email = document.getElementById('uEmail').value.trim();
-    const name = document.getElementById('uName').value.trim();
-    const password = document.getElementById('uPassword').value;
-    const err = document.getElementById('uErr');
-    if (!name || !email || !password) { err.textContent = 'Name, email and password are required.'; err.classList.add('show'); return; }
-    if (DB.users.some(u => u.email === email)) { err.textContent = 'An account with this email already exists.'; err.classList.add('show'); return; }
-    DB.users.push({
-      id: DB.nextUserId++, name, email, password, role: document.getElementById('uRole').value,
-      college_id: Number(document.getElementById('uCollege').value), department: document.getElementById('uDept').value.trim(),
-    });
-    closeModal(); toast('User created'); renderAdmin();
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', ()=>{
+  b.closest('dialog').close();
+}));
+
+const addDialog = document.getElementById('addDialog');
+document.getElementById('openAdd').addEventListener('click', ()=>{ addMsg.textContent=''; addDialog.showModal(); });
+document.getElementById('emptyAdd').addEventListener('click', ()=>{ addMsg.textContent=''; addDialog.showModal(); });
+document.getElementById('emptyReset').addEventListener('click', ()=>{ search.value=''; uniSel.value=''; domSel.value=''; render(); });
+document.getElementById('clearFilters').addEventListener('click', ()=>{ search.value=''; uniSel.value=''; domSel.value=''; render(); });
+
+document.getElementById('addForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const p = {
+    title: document.getElementById('f-title').value.trim(),
+    name: document.getElementById('f-name').value.trim(),
+    uni: document.getElementById('f-uni').value.trim(),
+    domain: document.getElementById('f-domain').value,
+    status: document.getElementById('f-status').value,
+    desc: document.getElementById('f-desc').value.trim(),
+    link: document.getElementById('f-link').value.trim(),
+    authorId: viewerId || null,
+    createdAt: Date.now()
   };
+  if(!db){ addMsg.textContent = 'Posting needs the published page — open it on claude.ai.'; return; }
+  submitBtn.disabled = true; addMsg.textContent = 'Publishing…';
+  try{
+    await db.collection('projects').add(p);
+    addMsg.textContent = '';
+    e.target.reset();
+    addDialog.close();
+  }catch(err){
+    if(err && err.code === 'invalid_argument') addMsg.textContent = "Your account can't post here (view-only access).";
+    else addMsg.textContent = 'Could not publish — try again in a moment.';
+  }finally{
+    submitBtn.disabled = false;
+  }
+});
+
+[search, uniSel, domSel].forEach(el=>el.addEventListener('input', render));
+
+async function seedIfEmpty(){
+  try{
+    const snap = await db.collection('projects').limit(1).get();
+    if(snap.empty){
+      for(const p of seed){ await db.collection('projects').add(p); }
+    }
+  }catch(e){ /* another viewer likely seeded concurrently; ignore */ }
 }
 
-render();
+async function init(){
+  try{ db = await claude.use('db'); }catch(e){ db = null; }
+  try{ usr = await claude.use('user'); }catch(e){ usr = null; }
+  try{ comments = await claude.use('comments'); }catch(e){ comments = null; }
+
+  if(!db){
+    offlineBanner.style.display = 'block';
+    viewerBox.textContent = '';
+    submitBtn.disabled = true;
+    projects = seed.map((p,i)=>({id:'seed'+i, ...p}));
+    populateFilters(); render();
+    return;
+  }
+
+  if(usr){
+    try{
+      const me = await usr.me();
+      viewerId = me.id;
+      if(me.id){
+        viewerBox.innerHTML = `<img src="${me.avatarUrl}" alt=""> ${esc(me.name || 'You')}`;
+      } else {
+        viewerBox.textContent = 'Viewing publicly';
+      }
+      const write = await usr.can('data.write');
+      canWrite = write;
+      if(write === false){
+        document.getElementById('openAdd').disabled = true;
+        document.getElementById('openAdd').title = 'View-only access';
+      }
+    }catch(e){ viewerBox.textContent=''; }
+  }
+
+  await seedIfEmpty();
+
+  db.collection('projects').orderBy('createdAt','desc').limit(200).onSnapshot(
+    snap=>{
+      projects = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      populateFilters();
+      render();
+    },
+    err=>{ offlineBanner.textContent = 'Live updates are unavailable right now — showing the last loaded projects.'; offlineBanner.style.display='block'; }
+  );
+}
+
+init();
 </script>
 </body>
 </html>
