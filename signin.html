@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fieldnotes — Student Project Exchange</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1B2A4A; --paper:#FAF9F6; --gold:#C89B3C; --teal:#3E7C7C; --line:#DAD5C9; --muted:#6B7280;
+  --card:#FFFFFF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --ink:#EDE9DF; --paper:#14181F; --gold:#D9AE58; --teal:#6FB3B3; --line:#2A2F3A; --muted:#9AA0AC; --card:#1B202B; }
+}
+:root[data-theme="dark"]{ --ink:#EDE9DF; --paper:#14181F; --gold:#D9AE58; --teal:#6FB3B3; --line:#2A2F3A; --muted:#9AA0AC; --card:#1B202B; }
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;}
+h1,h2,h3{font-family:'Fraunces',serif;font-weight:600;margin:0;}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px;}
+header{border-bottom:1px solid var(--line);padding:28px 0 22px;}
+.brandrow{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+.brand{font-size:28px;letter-spacing:-0.01em;}
+.brand span{color:var(--teal);}
+.tag{color:var(--muted);font-size:14px;max-width:420px;}
+.headright{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.viewer{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);}
+.viewer img{width:22px;height:22px;border-radius:50%;}
+.banner{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:10px 14px;font-size:13px;color:var(--muted);margin:18px 0;display:none;}
+main{padding:32px 0 80px;}
+.toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:24px;}
+input,select,textarea{font-family:'Inter',sans-serif;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:3px;background:var(--card);color:var(--ink);}
+input[type=text]{flex:1;min-width:180px;}
+select{cursor:pointer;}
+.btn{font-family:'Inter',sans-serif;font-size:14px;font-weight:600;padding:10px 16px;border-radius:3px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;}
+.btn.secondary{background:transparent;color:var(--ink);}
+.btn.small{padding:6px 12px;font-size:13px;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.count{color:var(--muted);font-size:13px;margin-bottom:18px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:18px;cursor:pointer;display:flex;flex-direction:column;gap:10px;}
+.card:hover{border-color:var(--teal);}
+.card:focus-visible,.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+.badge{display:inline-block;font-size:11px;font-weight:600;color:var(--teal);border:1px solid var(--teal);border-radius:20px;padding:2px 10px;width:fit-content;}
+.card h3{font-size:18px;line-height:1.25;}
+.card .meta{font-size:12.5px;color:var(--muted);}
+.card p{font-size:13.5px;color:var(--muted);margin:0;flex:1;}
+.empty{border:1px dashed var(--line);border-radius:4px;padding:48px 24px;text-align:center;color:var(--muted);}
+.empty a{color:var(--teal);cursor:pointer;text-decoration:underline;}
+dialog{border:none;border-radius:6px;padding:0;max-width:560px;width:92%;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.25);}
+dialog::backdrop{background:rgba(20,20,25,.5);}
+.dialog-body{padding:28px;max-height:80vh;overflow-y:auto;}
+.dialog-body h2{font-size:22px;margin-bottom:6px;}
+.dialog-body .meta{color:var(--muted);font-size:13px;margin-bottom:16px;}
+.dialog-body .field{margin-bottom:16px;}
+.dialog-body label{display:block;font-size:12px;font-weight:600;color:var(--muted);text-transform:none;margin-bottom:4px;}
+.dialog-body .fielddesc{white-space:pre-wrap;font-size:14.5px;}
+.dialog-actions{display:flex;gap:10px;margin-top:6px;}
+form.addform{display:flex;flex-direction:column;gap:14px;}
+form.addform label{font-size:13px;font-weight:600;}
+form.addform .row{display:flex;gap:12px;flex-wrap:wrap;}
+form.addform .row > div{flex:1;min-width:160px;display:flex;flex-direction:column;gap:5px;}
+textarea{width:100%;resize:vertical;min-height:80px;font-family:'Inter',sans-serif;}
+.close-x{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);}
+dialog{position:relative;}
+.formmsg{font-size:13px;color:var(--muted);min-height:16px;}
+footer{border-top:1px solid var(--line);padding:18px 0;color:var(--muted);font-size:12.5px;text-align:center;}
+
+.auth-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.auth-tabs{display:flex;gap:8px;margin:0 0 20px}
+.auth-tabs button{flex:1}
+.auth-form{display:flex;flex-direction:column;gap:13px}
+.auth-form label{display:block;font-size:13px;font-weight:600;margin-bottom:5px}
+.auth-form input{width:100%}
+.auth-note{font-size:12px;color:var(--muted);margin-top:12px}
+
+#appShell{display:none}
+body.auth-locked{overflow:hidden}
+body.auth-locked #authDialog{display:block;position:fixed;inset:0;margin:0;width:100%;height:100%;max-width:none;max-height:none;border-radius:0;background:var(--paper);box-shadow:none;z-index:9999;overflow:auto}
+body.auth-locked #authDialog::backdrop{background:var(--paper)}
+body.auth-locked #authDialog .dialog-body{max-width:440px;margin:8vh auto;padding:32px}
+body.auth-locked #authDialog [data-close]{display:none}
+</style>
+</head>
+<body>
+<div id="appShell">
+<header>
+  <div class="wrap brandrow">
+    <div>
+      <div class="brand">Field<span>notes</span></div>
+      <div class="tag">A shared board where students across colleges post the projects they're building and find what others are working on.</div>
+    </div>
+    <div class="headright">
+      <div class="viewer" id="viewerBox">Viewing publicly</div>
+      <div class="auth-actions" id="authActions">
+        <button class="btn secondary small" id="openLogin">Log in</button>
+        <button class="btn small" id="openSignup">Sign up</button>
+        <button class="btn small" id="openAdd">Post a project</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="banner" id="offlineBanner">You're viewing a local preview — open the published page to post, comment, and see everyone's projects live.</div>
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Search by title, tech, or keyword…">
+    <select id="filterUni"><option value="">All institutions</option></select>
+    <select id="filterDomain"><option value="">All domains</option></select>
+    <button class="btn secondary small" id="clearFilters">Clear</button>
+  </div>
+  <div class="count" id="resultCount"></div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="emptyState" style="display:none;">
+    Nothing matches yet. <a id="emptyReset">Clear filters</a> or <a id="emptyAdd">post the first project</a>.
+  </div>
+</main>
+
+<footer>Signed-in members of this artifact's organization can post and comment. Everyone's posts are shared and update live.</footer>
+</div><!-- appShell -->
+
+<dialog id="viewDialog">
+  <button class="close-x" data-close>✕</button>
+  <div class="dialog-body" id="viewBody"></div>
+</dialog>
+
+<dialog id="addDialog">
+  <button class="close-x" data-close>✕</button>
+  <div class="dialog-body">
+    <h2 style="margin-bottom:18px;">Post a project</h2>
+    <form class="addform" id="addForm">
+      <div><label>Project title</label><input required type="text" id="f-title" placeholder="e.g. Campus Ride-Share Matcher"></div>
+      <div class="row">
+        <div><label>Your name</label><input required type="text" id="f-name" placeholder="Jane Doe"></div>
+        <div><label>Institution</label><input required type="text" id="f-uni" placeholder="e.g. NIT Trichy"></div>
+      </div>
+      <div class="row">
+        <div><label>Domain</label>
+          <select id="f-domain">
+            <option>Web Development</option><option>Mobile Apps</option><option>AI / ML</option>
+            <option>IoT / Hardware</option><option>Data Science</option><option>Cybersecurity</option>
+            <option>Design</option><option>Other</option>
+          </select>
+        </div>
+        <div><label>Status</label>
+          <select id="f-status"><option>In progress</option><option>Completed</option><option>Looking for teammates</option></select>
+        </div>
+      </div>
+      <div><label>Description</label><textarea required id="f-desc" placeholder="What does it do, what stack did you use, what's next?"></textarea></div>
+      <div><label>Contact / link (optional)</label><input type="text" id="f-link" placeholder="email, GitHub, or portfolio link"></div>
+      <div class="formmsg" id="addMsg"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px;">
+        <button type="button" class="btn secondary" data-close>Cancel</button>
+        <button type="submit" class="btn" id="submitBtn">Publish project</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+
+<dialog id="authDialog">
+  <button class="close-x" data-close>✕</button>
+  <div class="dialog-body">
+    <h2 id="authTitle" style="margin-bottom:8px;">Welcome to Fieldnotes</h2>
+    <p class="meta">Sign in or create an account to join the project community.</p>
+    <div class="auth-tabs">
+      <button class="btn secondary small" id="loginTab" type="button">Log in</button>
+      <button class="btn secondary small" id="signupTab" type="button">Sign up</button>
+    </div>
+    <form id="authForm" class="auth-form">
+      <div id="authNameWrap" style="display:none">
+        <label for="authName">Your name</label>
+        <input id="authName" type="text" autocomplete="name" placeholder="Your name">
+      </div>
+      <div>
+        <label for="authEmail">Email address</label>
+        <input id="authEmail" type="email" required autocomplete="email" placeholder="you@example.com">
+      </div>
+      <div>
+        <label for="authPassword">Password</label>
+        <input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters">
+      </div>
+      <div class="formmsg" id="authMsg" role="status"></div>
+      <button class="btn" id="authSubmit" type="submit">Log in</button>
+    </form>
+    <div class="auth-note">Prototype only: this demo doesn't securely create accounts or verify passwords. Connect a real authentication provider before publishing.</div>
+  </div>
+</dialog>
+
+<script>
+const seed = [
+  {title:"Campus Ride-Share Matcher", name:"Ananya Rao", uni:"BITS Pilani", domain:"Mobile Apps", status:"Completed", desc:"An Android app that matches students commuting the same route to and from campus, cutting auto-fare costs. Built with Kotlin, Firebase, and the Google Maps Directions API.\n\nNext: adding a fare-split ledger.", link:"github.com/ananyar/rideshare"},
+  {title:"Low-Cost Soil Moisture Sensor Network", name:"Rohit Verma", uni:"IIT Roorkee", domain:"IoT / Hardware", status:"In progress", desc:"A mesh of ESP32-based soil sensors for a college farm plot, reporting moisture and temperature over LoRa to a dashboard that recommends irrigation windows.", link:"rohitv@iitr.ac.in"},
+  {title:"Lecture Notes Summarizer", name:"Priya Menon", uni:"Christ University", domain:"AI / ML", status:"Looking for teammates", desc:"A tool that converts recorded lecture audio into structured, topic-wise notes using Whisper for transcription and a fine-tuned summarization model. Looking for someone comfortable with frontend work.", link:"github.com/pmenon/lecnotes"},
+  {title:"Placement Cell Analytics Dashboard", name:"Devansh Iyer", uni:"VIT Vellore", domain:"Data Science", status:"Completed", desc:"A dashboard built for our placement cell to track offer trends, branch-wise placement rates, and recruiter visit patterns over five years, using Python, Pandas and Plotly Dash.", link:""}
+];
+
+let db=null, usr=null, comments=null, canWrite=null, viewerId=null;
+let projects = []; // {id, ...fields}
+
+const grid = document.getElementById('grid');
+const uniSel = document.getElementById('filterUni');
+const domSel = document.getElementById('filterDomain');
+const search = document.getElementById('search');
+const resultCount = document.getElementById('resultCount');
+const emptyState = document.getElementById('emptyState');
+const viewerBox = document.getElementById('viewerBox');
+const offlineBanner = document.getElementById('offlineBanner');
+const submitBtn = document.getElementById('submitBtn');
+const addMsg = document.getElementById('addMsg');
+
+
+// Front-end demo authentication. Use a real auth provider for production.
+const authDialog = document.getElementById('authDialog');
+const authForm = document.getElementById('authForm');
+const authMsg = document.getElementById('authMsg');
+let authMode = 'login';
+let demoUser = null;
+
+function showAuth(mode){
+  authMode = mode;
+  authMsg.textContent = '';
+  document.getElementById('authTitle').textContent = mode === 'login' ? 'Welcome back' : 'Create your account';
+  document.getElementById('authNameWrap').style.display = mode === 'signup' ? 'block' : 'none';
+  document.getElementById('authName').required = mode === 'signup';
+  document.getElementById('authSubmit').textContent = mode === 'login' ? 'Log in' : 'Create account';
+  document.getElementById('loginTab').classList.toggle('secondary', mode !== 'login');
+  document.getElementById('signupTab').classList.toggle('secondary', mode !== 'signup');
+  authForm.reset();
+  authDialog.showModal();
+}
+document.getElementById('openLogin').addEventListener('click',()=>showAuth('login'));
+document.getElementById('openSignup').addEventListener('click',()=>showAuth('signup'));
+document.getElementById('loginTab').addEventListener('click',()=>showAuth('login'));
+document.getElementById('signupTab').addEventListener('click',()=>showAuth('signup'));
+
+function updateAuthUI(){
+  const actions = document.getElementById('authActions');
+  if(demoUser){
+    viewerBox.textContent = demoUser.name + ' · ' + demoUser.email;
+    actions.innerHTML = '<button class="btn secondary small" id="logoutBtn">Log out</button><button class="btn small" id="openAdd">Post a project</button>';
+    document.getElementById('logoutBtn').onclick = ()=>{
+      demoUser = null;
+      try{ localStorage.removeItem('fieldnotesDemoUser'); }catch(e){}
+      updateAuthUI();
+      document.getElementById('appShell').style.display='none';
+      document.body.classList.add('auth-locked');
+      showAuth('login');
+    };
+    document.getElementById('openAdd').onclick = openProjectForm;
+  }else{
+    viewerBox.textContent = 'Viewing publicly';
+    actions.innerHTML = '<button class="btn secondary small" id="openLogin">Log in</button><button class="btn small" id="openSignup">Sign up</button><button class="btn small" id="openAdd">Post a project</button>';
+    document.getElementById('openLogin').onclick = ()=>showAuth('login');
+    document.getElementById('openSignup').onclick = ()=>showAuth('signup');
+    document.getElementById('openAdd').onclick = ()=>showAuth('login');
+  }
+}
+function openProjectForm(){
+  addMsg.textContent='';
+  addDialog.showModal();
+}
+authForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  const email = document.getElementById('authEmail').value.trim().toLowerCase();
+  const password = document.getElementById('authPassword').value;
+  const name = document.getElementById('authName').value.trim();
+  if(password.length < 6){ authMsg.textContent='Password must be at least 6 characters.'; return; }
+  if(authMode === 'signup' && !name){ authMsg.textContent='Please enter your name.'; return; }
+  // Local prototype flow only; use a real authentication provider for production.
+  let accounts = {};
+  try{ accounts = JSON.parse(localStorage.getItem('fieldnotesDemoAccounts') || '{}'); }catch(e){}
+  if(authMode === 'signup'){
+    if(accounts[email]){ authMsg.textContent='An account with this email already exists. Please log in.'; return; }
+    accounts[email] = {name, password};
+    try{ localStorage.setItem('fieldnotesDemoAccounts',JSON.stringify(accounts)); }catch(e){}
+    authMode = 'login';
+    document.getElementById('authTitle').textContent='Account created — log in';
+    document.getElementById('authNameWrap').style.display='none';
+    document.getElementById('authName').required=false;
+    document.getElementById('authSubmit').textContent='Log in';
+    document.getElementById('loginTab').classList.remove('secondary');
+    document.getElementById('signupTab').classList.add('secondary');
+    document.getElementById('authPassword').value='';
+    authMsg.textContent='Sign up successful! Log in with your email and password.';
+    return;
+  }
+  if(!accounts[email] || accounts[email].password !== password){ authMsg.textContent='Email or password is incorrect. Please sign up first if you are new.'; return; }
+  demoUser = {name:accounts[email].name, email};
+  try{ localStorage.setItem('fieldnotesDemoUser',JSON.stringify(demoUser)); }catch(e){}
+  updateAuthUI();
+  document.body.classList.remove('auth-locked');
+  document.getElementById('appShell').style.display='block';
+  authDialog.close();
+});
+try{
+  const saved = JSON.parse(localStorage.getItem('fieldnotesDemoUser') || 'null');
+  if(saved && saved.email && saved.name) demoUser = saved;
+}catch(e){}
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function populateFilters(){
+  const unis = [...new Set(projects.map(p=>p.uni))].sort();
+  const doms = [...new Set(projects.map(p=>p.domain))].sort();
+  const uKeep = uniSel.value, dKeep = domSel.value;
+  uniSel.innerHTML = '<option value="">All institutions</option>' + unis.map(u=>`<option>${esc(u)}</option>`).join('');
+  domSel.innerHTML = '<option value="">All domains</option>' + doms.map(d=>`<option>${esc(d)}</option>`).join('');
+  uniSel.value = uKeep; domSel.value = dKeep;
+}
+
+function render(){
+  const q = search.value.trim().toLowerCase();
+  const uni = uniSel.value, dom = domSel.value;
+  const filtered = projects.filter(p=>{
+    if(uni && p.uni!==uni) return false;
+    if(dom && p.domain!==dom) return false;
+    if(q && !((p.title+p.desc+p.name+p.uni).toLowerCase().includes(q))) return false;
+    return true;
+  });
+  resultCount.textContent = `${filtered.length} project${filtered.length!==1?'s':''}`;
+  grid.innerHTML = '';
+  emptyState.style.display = filtered.length ? 'none' : 'block';
+  filtered.forEach(p=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.tabIndex = 0;
+    card.innerHTML = `<span class="badge">${esc(p.domain)}</span><h3>${esc(p.title)}</h3>
+      <div class="meta">${esc(p.name)} · ${esc(p.uni)}</div>
+      <p>${esc(p.desc.slice(0,110))}${p.desc.length>110?'…':''}</p>
+      <div class="meta">${esc(p.status)}</div>`;
+    card.addEventListener('click', ()=>openView(p, card));
+    card.addEventListener('keydown', e=>{ if(e.key==='Enter') openView(p, card); });
+    grid.appendChild(card);
+  });
+}
+
+const viewDialog = document.getElementById('viewDialog');
+function openView(p, cardEl) {
+  const canComment = !!comments;
+
+  let projectLink = "";
+
+  if (p.link) {
+    let url = p.link.trim();
+
+    if (!/^https?:\/\//i.test(url)) {
+      url = "https://" + url;
+    }
+
+    try {
+      const parsed = new URL(url);
+
+      if (["http:", "https:"].includes(parsed.protocol)) {
+        projectLink = `
+          <div class="field">
+            <label>Project Link / Contact</label>
+            <a href="${esc(parsed.href)}"
+               target="_blank"
+               rel="noopener noreferrer"
+               style="color:var(--teal);word-break:break-word;">
+              Visit Project / GitHub →
+            </a>
+          </div>`;
+      }
+    } catch (err) {
+      projectLink = `
+        <div class="field">
+          <label>Contact</label>
+          <div class="fielddesc">${esc(p.link)}</div>
+        </div>`;
+    }
+  }
+
+  document.getElementById("viewBody").innerHTML = `
+    <span class="badge">${esc(p.domain)}</span>
+
+    <h2 style="margin-top:12px;font-size:26px;">
+      ${esc(p.title)}
+    </h2>
+
+    <div class="meta" style="margin-top:8px;">
+      👤 ${esc(p.name)}<br>
+      🎓 ${esc(p.uni)}<br>
+      📌 ${esc(p.status)}
+    </div>
+
+    <hr style="border:0;border-top:1px solid var(--line);margin:20px 0;">
+
+    <div class="field">
+      <label>About This Project</label>
+      <div class="fielddesc">${esc(p.desc)}</div>
+    </div>
+
+    ${p.tech ? `
+      <div class="field">
+        <label>Technologies Used</label>
+        <div class="fielddesc">${esc(p.tech)}</div>
+      </div>
+    ` : ""}
+
+    ${projectLink}
+
+    <div class="dialog-actions" style="margin-top:24px;">
+      <button class="btn secondary small" id="discussBtn"
+        ${canComment ? "" : "disabled"}>
+        Discuss Project
+      </button>
+
+      <button class="btn small" id="backBtn">
+        Close
+      </button>
+    </div>
+
+    <div class="formmsg" id="discussMsg"></div>
+  `;
+
+  viewDialog.showModal();
+
+  document.getElementById("backBtn").onclick = () => {
+    viewDialog.close();
+  };
+
+  document.getElementById("discussBtn").onclick = async () => {
+    const msg = document.getElementById("discussMsg");
+
+    if (!comments) {
+      msg.textContent =
+        "Comments are available on the published platform.";
+      return;
+    }
+
+    try {
+      const res = await comments.openComposer({
+        element: cardEl ||
+          document.getElementById("discussBtn")
+      });
+
+      if (!res.opened) {
+        msg.textContent =
+          "Comment box is busy. Try again.";
+      }
+    } catch (err) {
+      msg.textContent =
+        "Unable to open comments right now.";
+    }
+  };
+}
+
+document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', ()=>{
+  b.closest('dialog').close();
+}));
+
+const addDialog = document.getElementById('addDialog');
+document.getElementById('openAdd').addEventListener('click', ()=>{ if(demoUser) openProjectForm(); else showAuth('login'); });
+document.getElementById('emptyAdd').addEventListener('click', ()=>{ if(demoUser) openProjectForm(); else showAuth('login'); });
+document.getElementById('emptyReset').addEventListener('click', ()=>{ search.value=''; uniSel.value=''; domSel.value=''; render(); });
+document.getElementById('clearFilters').addEventListener('click', ()=>{ search.value=''; uniSel.value=''; domSel.value=''; render(); });
+
+document.getElementById('addForm').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const p = {
+    title: document.getElementById('f-title').value.trim(),
+    name: document.getElementById('f-name').value.trim(),
+    uni: document.getElementById('f-uni').value.trim(),
+    domain: document.getElementById('f-domain').value,
+    status: document.getElementById('f-status').value,
+    desc: document.getElementById('f-desc').value.trim(),
+    link: document.getElementById('f-link').value.trim(),
+    authorId: viewerId || null,
+    createdAt: Date.now()
+  };
+  if(!db){ addMsg.textContent = 'Posting needs the published page — open it on claude.ai.'; return; }
+  submitBtn.disabled = true; addMsg.textContent = 'Publishing…';
+  try{
+    await db.collection('projects').add(p);
+    addMsg.textContent = '';
+    e.target.reset();
+    addDialog.close();
+  }catch(err){
+    if(err && err.code === 'invalid_argument') addMsg.textContent = "Your account can't post here (view-only access).";
+    else addMsg.textContent = 'Could not publish — try again in a moment.';
+  }finally{
+    submitBtn.disabled = false;
+  }
+});
+
+[search, uniSel, domSel].forEach(el=>el.addEventListener('input', render));
+
+async function seedIfEmpty(){
+  try{
+    const snap = await db.collection('projects').limit(1).get();
+    if(snap.empty){
+      for(const p of seed){ await db.collection('projects').add(p); }
+    }
+  }catch(e){ /* another viewer likely seeded concurrently; ignore */ }
+}
+
+async function init(){
+  try{ db = await claude.use('db'); }catch(e){ db = null; }
+  try{ usr = await claude.use('user'); }catch(e){ usr = null; }
+  try{ comments = await claude.use('comments'); }catch(e){ comments = null; }
+
+  if(!db){
+    offlineBanner.style.display = 'block';
+    viewerBox.textContent = '';
+    submitBtn.disabled = true;
+    projects = seed.map((p,i)=>({id:'seed'+i, ...p}));
+    populateFilters(); render();
+    return;
+  }
+
+  if(usr){
+    try{
+      const me = await usr.me();
+      viewerId = me.id;
+      if(me.id){
+        viewerBox.innerHTML = `<img src="${me.avatarUrl}" alt=""> ${esc(me.name || 'You')}`;
+      } else {
+        viewerBox.textContent = 'Viewing publicly';
+      }
+      const write = await usr.can('data.write');
+      canWrite = write;
+      if(write === false){
+        document.getElementById('openAdd').disabled = true;
+        document.getElementById('openAdd').title = 'View-only access';
+      }
+    }catch(e){ viewerBox.textContent=''; }
+  }
+
+  await seedIfEmpty();
+
+  db.collection('projects').orderBy('createdAt','desc').limit(200).onSnapshot(
+    snap=>{
+      projects = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      populateFilters();
+      render();
+    },
+    err=>{ offlineBanner.textContent = 'Live updates are unavailable right now — showing the last loaded projects.'; offlineBanner.style.display='block'; }
+  );
+}
+
+updateAuthUI();
+// First visit starts at Sign up; returning signed-in demo users go to projects.
+if(demoUser){ document.getElementById('appShell').style.display='block'; }
+else { document.body.classList.add('auth-locked'); showAuth('signup'); }
+init();
+</script>
+</body>
+</html>
